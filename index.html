@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strawberry's Grievance Portal 🍓💕</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-image: url('https://www.transparenttextures.com/patterns/food.png');
+            margin: 0;
+            overflow: auto;
+            position: relative;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+            animation: gradientShift 15s infinite alternate;
+        }
+        @keyframes gradientShift {
+            0% { background-color: #87CEEB; }
+            50% { background-color: #ADD8E6; }
+            100% { background-color: #B0E0E6; }
+        }
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 550px;
+            margin: 20px 0;
+            animation: fadeIn 1s ease-in-out;
+            z-index: 1;
+            border: 2px solid #4682B4;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        @keyframes strawberryFall {
+            0% { top: -50px; opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        @keyframes growStrawberry {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes foldLetter {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(180deg); }
+            100% { transform: rotateX(0deg); }
+        }
+        @keyframes shootingStar {
+            0% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(300px, 300px); opacity: 0; }
+        }
+        @keyframes fillMeter {
+            0% { width: 0%; }
+            100% { width: var(--love-percentage); }
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #FF6347; }
+            50% { box-shadow: 0 0 20px #FF6347; }
+            100% { box-shadow: 0 0 5px #FF6347; }
+        }
+        h1 {
+            color: #4682B4;
+            font-size: 28px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #4682B4;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4682B4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #5F9EA0;
+            transform: scale(1.05);
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #E0FFFF;
+            border-radius: 10px;
+            display: none;
+        }
+        .history, .memory-lane, .love-jar {
+            margin-top: 20px;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #4682B4;
+            text-align: left;
+        }
+        th {
+            background-color: #4682B4;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        #unicorn {
+            position: fixed;
+            top: 50%;
+            left: -150px;
+            width: 150px;
+            z-index: 999;
+            display: none;
+        }
+        @keyframes danceAcross {
+            0% { left: -150px; }
+            100% { left: 100%; }
+        }
+        .spinning {
+            animation: spin 2s linear;
+        }
+        #chaosToggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        #chaosToggle label {
+            margin-left: 10px;
+            color: #4682B4;
+            font-weight: bold;
+        }
+        #heartAnimation {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 40px;
+            color: #FF6347;
+            animation: pulse 2s infinite;
+            z-index: 999;
+        }
+        #photoFrame {
+            margin: 15px auto;
+            width: 180px;
+            height: 180px;
+            border: 5px solid #4682B4;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #photoFrame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FF6347;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .strawberry {
+            position: absolute;
+            font-size: 30px;
+            animation: strawberryFall 3s linear;
+            z-index: 998;
+        }
+        .strawberry-garden {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            z-index: 997;
+        }
+        .strawberry-plant {
+            font-size: 40px;
+            animation: growStrawberry 2s ease-in-out;
+        }
+        #loveLetter {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #FFE4E1;
+            padding: 20px;
+            border: 3px solid #FF6347;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            display: none;
+            animation: foldLetter 2s ease-in-out;
+        }
+        #loveLetter p {
+            margin: 0;
+            color: #FF6347;
+            font-size: 18px;
+            font-style: italic;
+        }
+        #loveLetter button {
+            margin-top: 15px;
+            background-color: #FF6347;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        #loveLetter button:hover {
+            background-color: #FF7F50;
+        }
+        .memory-lane ul, .love-jar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .memory-lane li, .love-jar li {
+            background-color: #E0FFFF;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 5px solid #4682B4;
+        }
+        /* Updated Dashboard Styles */
+        #dashboard {
+            background: linear-gradient(135deg, #87CEEB, #E0FFFF);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 700px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+            overflow: visible;
+        }
+        #dashboard h1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #strawberryHeart {
+            font-size: 40px;
+            animation: pulse 2s infinite;
+        }
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            justify-items: center;
+        }
+        .tile {
+            background-color: #4682B4;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .tile:hover {
+            transform: scale(1.1);
+            background-color: #5F9EA0;
+        }
+        #liveClock {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #4682B4;
+        }
+        #dailyQuote {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #E0FFFF;
+            border-radius: 10px;
+            font-style: italic;
+            color: #4682B4;
+        }
+        #loveMeter {
+            margin-top: 15px;
+            background-color: #E0FFFF;
+            padding: 15px;
+            border-radius: 10px;
+            opacity: 1 !important;
+        }
+        #meterBar {
+            height: 20px;
+            background-color: #FF6347;
+            border-radius: 10px;
+            animation: fillMeter 2s ease-in-out forwards, glow 2s infinite;
+        }
+        #lovePercentage {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #4682B4;
+        }
+        #wishStar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            color: #FFD700;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        #shootingStar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+            color: #FFD700;
+            display: none;
+            z-index: 1000;
+            animation: shootingStar 2s ease-in-out;
+        }
+        #wishMessage {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background-color: #FFE4E1;
+            padding: 10px;
+            border-radius: 5px;
+            color: #FF6347;
+            display: none;
+            z-index: 1000;
+        }
+        #starlitSky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #1C2526, #000);
+            display: none;
+            z-index: 998;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        #constellation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: #FFD700;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        #dashboardGarden {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 999;
+        }
+        .dashboard-plant {
+            font-size: 30px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .dashboard-plant.grow {
+            opacity: 1;
+            animation: growStrawberry 1s ease-in-out;
+        }
+        #recentGrievances {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #FFE4E1;
+            border-radius: 10px;
+        }
+        #recentGrievances p {
+            margin: 5px 0;
+            color: #FF6347;
+        }
+    </style>
+</head>
+<body>
+    <div id="heartAnimation">💖</div>
+    <div id="notification">New grievance from Strawberry! Check the history to respond 💌</div>
+    <div id="loveLetter">
+        <p id="letterMessage"></p>
+        <button onclick="closeLetter()">Close</button>
+    </div>
+    <div id="starlitSky">
+        <div id="constellation">S & [Your Initial]</div>
+    </div>
+
+    <div class="main-content">
+        <!-- Login Page -->
+        <div id="loginPage" class="container">
+            <h1>Strawberry's Grievance Portal 🍓💕</h1>
+            <p>My dear Strawberry, share your grievances, and I’ll shower you with love! 🥰</p>
+            <div id="photoFrame">
+                <img src="Sana.jpg" alt="Photo of Us">
+            </div>
+            <input type="text" id="username" placeholder="Username" value="Sanaya">
+            <input type="password" id="password" placeholder="Password" value="mydearstrawberry">
+            <button onclick="login()">Log in to your account</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="container hidden">
+            <h1 id="welcomeMessage">Welcome, <span id="nameDisplay">Strawberry</span>! <span id="strawberryHeart">🍓</span></h1>
+            <div id="nameToggle">
+                <input type="checkbox" id="toggleName" onchange="toggleNameDisplay()">
+                <label for="toggleName">Show my real name</label>
+            </div>
+            <div id="liveClock"></div>
+            <div id="dailyQuote"></div>
+            <div id="loveMeter">
+                <p>Our Love Meter 💕</p>
+                <div id="meterBar" style="width: 0%;"></div>
+                <p id="lovePercentage"></p>
+            </div>
+            <div class="tiles">
+                <div class="tile" onclick="showGrievanceForm()">Submit Grievance</div>
+                <div class="tile" onclick="showHistory()">View History</div>
+                <div class="tile" onclick="showMemoryLane()">Memory Lane</div>
+                <div class="tile" onclick="showLoveJar()">Love Jar</div>
+            </div>
+            <div id="recentGrievances">
+                <p>Recent Grievances:</p>
+                <div id="recentGrievanceDetails"></div>
+            </div>
+            <div id="wishStar">⭐</div>
+            <div id="shootingStar">🌠</div>
+            <div id="wishMessage"></div>
+            <div id="dashboardGarden"></div>
+        </div>
+
+        <!-- Grievance Form -->
+        <div id="grievanceForm" class="container hidden">
+            <h1>Submit Your Grievance, <span id="formNameDisplay">Strawberry</span> 🍓</h1>
+            <input type="text" id="grievanceTitle" placeholder="Title (e.g., What's bothering you?)">
+            <textarea id="grievanceDesc" placeholder="Describe your grievance..." rows="4"></textarea>
+            <select id="mood" onchange="updateBackground()">
+                <option value="😊 Happy">😊 Happy</option>
+                <option value="😢 Sad">😢 Sad</option>
+                <option value="😠 Angry">😠 Angry</option>
+                <option value="😍 In Love">😍 In Love</option>
+            </select>
+            <div id="chaosToggle">
+                <input type="checkbox" id="chaosMode" checked>
+                <label for="chaosMode">Enable Chaos Mode 🌀</label>
+            </div>
+            <button onclick="submitGrievance()">Submit Another!</button>
+            <button onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+
+        <!-- Response Page -->
+        <div id="responsePage" class="container hidden">
+            <h1>Thank you, <span id="responseNameDisplay">Strawberry</span> 🍓💕</h1>
+            <p>Your grievance has been sent to your loving boyfriend 🐻</p>
+            <p id="randomResponse"></p>
+            <p id="loveNote"></p>
+            <button onclick="showGrievanceForm()">Submit Another Grievance</button>
+            <button onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+
+        <!-- Grievance History -->
+        <div id="historyPage" class="container hidden">
+            <h1>Grievance History 📜</h1>
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Mood</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+            <button onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+
+        <!-- Memory Lane -->
+        <div id="memoryLane" class="container hidden">
+            <h1>Our Memory Lane 💕</h1>
+            <div class="memory-lane">
+                <ul>
+                    <li><strong>Our First Date</strong>: That magical evening at the park where we shared strawberry ice cream 🍓</li>
+                    <li><strong>The Day I Called You Strawberry</strong>: You blushed so hard when I said you’re as sweet as one! 😊</li>
+                    <li><strong>Our First Trip</strong>: That weekend getaway where we watched the sunset together 🌅</li>
+                    <li><strong>Your Birthday Surprise</strong>: I coded a little animation just for you, my love! 🎉</li>
+                </ul>
+            </div>
+            <button onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+
+        <!-- Love Jar -->
+        <div id="loveJar" class="container hidden">
+            <h1>Love Jar 💌</h1>
+            <div class="love-jar">
+                <ul id="loveNotes"></ul>
+            </div>
+            <button onclick="pickLoveNote()">Pick a Love Note</button>
+            <button onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <div id="strawberryGarden" class="strawberry-garden hidden"></div>
+    <img id="unicorn" src="https://media.giphy.com/media/3o7TKwmnDg2aWZiYxG/giphy.gif" alt="Dancing Unicorn">
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const responses = {
+            "😊 Happy": [
+                "I’m so glad you’re happy, Strawberry! Let’s code a new animation together to celebrate! 🍓🎉",
+                "Your happiness lights up my world, Sanaya! How about a strawberry picnic this weekend? 🍓🌞"
+            ],
+            "😢 Sad": [
+                "Oh no, my Strawberry is sad! I’ll wrap you in a big hug and build a new app to cheer you up! 🤗💻",
+                "I hate seeing you sad, my love. Let’s watch your favorite movie and eat strawberry ice cream tonight! 🍓🎥"
+            ],
+            "😠 Angry": [
+                "I’m sorry you’re upset, Strawberry. I’ll debug all your worries like I debug code—let’s fix this together! 🛠️🍓",
+                "My sweet Sanaya, let’s cool off with some strawberry smoothies and talk it out. I’m here for you! 🍓🥤"
+            ],
+            "😍 In Love": [
+                "Aww, Strawberry, you’re in love? Good thing I’m coding my heart out for you every day! 💕💻",
+                "My heart skips a beat seeing this, Sanaya! Let’s plan a romantic strawberry field date soon! 🍓💖"
+            ]
+        };
+
+        const loveNotes = [
+            "You’re my sweetuu Cutuuu Strawberry, and I adore you more than any code I’ve ever written! 🍓💻",
+            "Every moment with you is pure magic, Sanaya—like a perfectly animated canvas! 🌟",
+            "I’m the luckiest guy to have you, my love—let’s build more memories together! 🍀",
+            "You make my heart race every day, Strawberry, faster than any animation frame! 💓",
+            "I love you more than all the strawberries in the world, my Baby! 🍓✨"
+        ];
+
+        const letterMessages = [
+            "Dear Strawberry, you’re the sweetest part of my life. I’ll always be here to make you smile! 🍓💕",
+            "My Daer Baala, every day with you feels like a beautiful animation I never want to end. Love you! 🌟",
+            "To my Strawberry, I promise to code a lifetime of happiness for us. You’re my everything! 💻❤️"
+        ];
+
+        const dailyQuotes = [
+            "Every love story is beautiful, but ours is my favorite. 💕",
+            "You are my today and all of my tomorrows, Strawberry. 🍓",
+            "In a sea of people, my eyes will always search for you. 🌊",
+            "I love you more than yesterday, but less than tomorrow. ❤️",
+            "You’re my favorite hello and my hardest goodbye. 👋"
+        ];
+
+        const wishMessages = [
+            "Your wish is my command, Strawberry! 🌠",
+            "I’ll make all your dreams come true, my love! ✨",
+            "Wishing for a lifetime of happiness with you, Sanaya! 💕",
+            "Every star shines brighter because of you, Strawberry! ⭐"
+        ];
+
+        let grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+        let useNickname = true;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'Sanaya' && password === 'mydearstrawberry') {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                initDashboard();
+            } else {
+                alert('Oops! Wrong username or password. Try again, Strawberry! 🍓💕');
+            }
+        }
+
+        function initDashboard() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            document.getElementById('dailyQuote').innerText = dailyQuotes[new Date().getDay() % dailyQuotes.length];
+            const lovePercentage = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+            const meterBar = document.getElementById('meterBar');
+            meterBar.style.setProperty('--love-percentage', lovePercentage + '%');
+            document.getElementById('lovePercentage').innerText = `Our love is ${lovePercentage}% strong! 💖`;
+            initDashboardGarden();
+            updateRecentGrievances();
+
+            document.getElementById('wishStar').addEventListener('click', () => {
+                const shootingStar = document.getElementById('shootingStar');
+                const wishMessage = document.getElementById('wishMessage');
+                shootingStar.style.display = 'block';
+                wishMessage.style.display = 'block';
+                wishMessage.innerText = wishMessages[Math.floor(Math.random() * wishMessages.length)];
+                setTimeout(() => {
+                    shootingStar.style.display = 'none';
+                    wishMessage.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const timeString = now.toLocaleTimeString('en-US', options);
+            document.getElementById('liveClock').innerText = `Time to make more memories with you, Strawberry! ⏰ ${timeString}`;
+        }
+
+        function initDashboardGarden() {
+            const garden = document.getElementById('dashboardGarden');
+            for (let i = 0; i < 5; i++) {
+                const plant = document.createElement('div');
+                plant.className = 'dashboard-plant';
+                plant.innerText = '🍓';
+                garden.appendChild(plant);
+            }
+            garden.addEventListener('mouseover', () => {
+                document.querySelectorAll('.dashboard-plant').forEach(plant => plant.classList.add('grow'));
+            });
+        }
+
+        function updateRecentGrievances() {
+            const recentGrievanceDetails = document.getElementById('recentGrievanceDetails');
+            if (grievances.length > 0) {
+                const latestGrievance = grievances[grievances.length - 1];
+                recentGrievanceDetails.innerHTML = `
+                    <p><strong>Title:</strong> ${latestGrievance.title}</p>
+                    <p><strong>Mood:</strong> ${latestGrievance.mood}</p>
+                    <p><strong>Date:</strong> ${latestGrievance.date}</p>
+                `;
+            } else {
+                recentGrievanceDetails.innerHTML = '<p>No recent grievances yet.</p>';
+            }
+        }
+
+        function toggleNameDisplay() {
+            useNickname = !document.getElementById('toggleName').checked;
+            const nameDisplay = useNickname ? 'Strawberry' : 'Sanaya';
+            document.getElementById('nameDisplay').innerText = nameDisplay;
+            document.getElementById('formNameDisplay').innerText = nameDisplay;
+            document.getElementById('responseNameDisplay').innerText = nameDisplay;
+        }
+
+        function updateBackground() {
+            const mood = document.getElementById('mood').value;
+            const colors = {
+                "😊 Happy": "#87CEEB",
+                "😢 Sad": "#4682B4",
+                "😠 Angry": "#FF6347",
+                "😍 In Love": "#FF69B4"
+            };
+            document.body.style.backgroundColor = colors[mood];
+        }
+
+        function submitGrievance() {
+            const title = document.getElementById('grievanceTitle').value;
+            const desc = document.getElementById('grievanceDesc').value;
+            const mood = document.getElementById('mood').value;
+            const date = new Date().toLocaleString();
+
+            if (title && desc) {
+                const grievance = { title, desc, mood, date };
+                grievances.push(grievance);
+                localStorage.setItem('grievances', JSON.stringify(grievances));
+                triggerChaosMode();
+                triggerStrawberrySurprise();
+                showResponse(mood);
+                showNotification();
+                showLoveLetter();
+                updateHistory();
+                updateRecentGrievances(); // Update dashboard with latest grievance
+            } else {
+                alert('Please fill out all fields, Strawberry! 🍓💕');
+            }
+        }
+
+        function triggerChaosMode() {
+            const chaosMode = document.getElementById('chaosMode').checked;
+            if (!chaosMode || Math.random() > 0.5) return;
+
+            const chaosEffects = [
+                () => {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                },
+                () => {
+                    const unicorn = document.getElementById('unicorn');
+                    unicorn.style.display = 'block';
+                    unicorn.style.animation = 'danceAcross 5s linear';
+                    setTimeout(() => {
+                        unicorn.style.display = 'none';
+                        unicorn.style.animation = '';
+                    }, 5000);
+                },
+                () => {
+                    document.body.classList.add('spinning');
+                },
+                () => {
+                    const garden = document.getElementById('strawberryGarden');
+                    garden.classList.remove('hidden');
+                    garden.innerHTML = '';
+                    for (let i = 0; i < 5; i++) {
+                        const plant = document.createElement('div');
+                        plant.className = 'strawberry-plant';
+                        plant.innerText = '🍓';
+                        plant.style.animationDelay = (i * 0.3) + 's';
+                        garden.appendChild(plant);
+                    }
+                    setTimeout(() => garden.classList.add('hidden'), 5000);
+                },
+                () => {
+                    const sky = document.getElementById('starlitSky');
+                    sky.innerHTML = '';
+                    sky.style.display = 'block';
+                    for (let i = 0; i < 100; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'star';
+                        star.style.left = Math.random() * 100 + '%';
+                        star.style.top = Math.random() * 100 + '%';
+                        sky.appendChild(star);
+                    }
+                    const constellation = document.getElementById('constellation');
+                    constellation.style.opacity = '1';
+                    setTimeout(() => {
+                        sky.style.display = 'none';
+                        constellation.style.opacity = '0';
+                    }, 5000);
+                }
+            ];
+
+            const randomEffect = chaosEffects[Math.floor(Math.random() * chaosEffects.length)];
+            randomEffect();
+        }
+
+        function triggerStrawberrySurprise() {
+            for (let i = 0; i < 10; i++) {
+                const strawberry = document.createElement('div');
+                strawberry.className = 'strawberry';
+                strawberry.innerText = '🍓';
+                strawberry.style.left = Math.random() * 100 + 'vw';
+                strawberry.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(strawberry);
+                setTimeout(() => strawberry.remove(), 3000);
+            }
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoveLetter() {
+            const letter = document.getElementById('loveLetter');
+            const message = document.getElementById('letterMessage');
+            message.innerText = letterMessages[Math.floor(Math.random() * letterMessages.length)];
+            letter.style.display = 'block';
+        }
+
+        function closeLetter() {
+            document.getElementById('loveLetter').style.display = 'none';
+        }
+
+        function showResponse(mood) {
+            document.getElementById('grievanceForm').classList.add('hidden');
+            document.getElementById('responsePage').classList.remove('hidden');
+            const moodResponses = responses[mood] || responses["😊 Happy"];
+            const randomResponse = moodResponses[Math.floor(Math.random() * moodResponses.length)];
+            const randomLoveNote = loveNotes[Math.floor(Math.random() * loveNotes.length)];
+            document.getElementById('randomResponse').innerText = randomResponse;
+            document.getElementById('loveNote').innerText = randomLoveNote;
+        }
+
+        function showDashboard() {
+            document.getElementById('grievanceForm').classList.add('hidden');
+            document.getElementById('responsePage').classList.add('hidden');
+            document.getElementById('historyPage').classList.add('hidden');
+            document.getElementById('memoryLane').classList.add('hidden');
+            document.getElementById('loveJar').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            initDashboard();
+        }
+
+        function showGrievanceForm() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('grievanceForm').classList.remove('hidden');
+        }
+
+        function showHistory() {
+            const historyBody = document.getElementById('historyBody');
+            historyBody.innerHTML = '';
+            grievances.forEach(grievance => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grievance.title}</td>
+                    <td>${grievance.desc}</td>
+                    <td>${grievance.mood}</td>
+                    <td>${grievance.date}</td>
+                `;
+                historyBody.appendChild(row);
+            });
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('historyPage').classList.remove('hidden');
+            document.getElementById('memoryLane').classList.remove('hidden');
+        }
+
+        function showMemoryLane() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('memoryLane').classList.remove('hidden');
+        }
+
+        function showLoveJar() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('loveJar').classList.remove('hidden');
+        }
+
+        function pickLoveNote() {
+            const notesList = document.getElementById('loveNotes');
+            const note = document.createElement('li');
+            note.innerText = loveNotes[Math.floor(Math.random() * loveNotes.length)];
+            notesList.innerHTML = '';
+            notesList.appendChild(note);
+        }
+    </script>
+</body>
+</html>
