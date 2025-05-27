@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Boyfriend's View 🍓💕</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #87CEEB;
+            background-image: url('https://www.transparenttextures.com/patterns/food.png');
+            margin: 0;
+            overflow: auto;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 550px;
+            margin: 20px 0;
+            border: 2px solid #4682B4;
+        }
+        h1 {
+            color: #4682B4;
+            font-size: 28px;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #4682B4;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4682B4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #5F9EA0;
+            transform: scale(1.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #4682B4;
+            text-align: left;
+        }
+        th {
+            background-color: #4682B4;
+            color: white;
+        }
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FF6347;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="notification">New grievance from Strawberry! Check below 💌</div>
+
+    <div class="container" id="accessPage">
+        <h1>Boyfriend's View 🍓💕</h1>
+        <p>Enter the access code to see Sanaya's grievances</p>
+        <input type="text" id="accessCode" placeholder="Access Code">
+        <button onclick="checkAccess()">Access Grievances</button>
+    </div>
+
+    <div class="container hidden" id="grievanceView">
+        <h1>Sanaya's Grievances 🍓</h1>
+        <table id="grievanceTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Mood</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="grievanceBody"></tbody>
+        </table>
+        <button onclick="window.location.href='index.html'">Go to Strawberry's Portal</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase Configuration (Same as above)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNNUNYrIrWSkYZy2u-uotWe-FvkrEwTM0",
+             authDomain: "sanayagrievanceportal.firebaseapp.com",
+             databaseURL: "https://sanayagrievanceportal-default-rtdb.firebaseio.com",
+            projectId: "sanayagrievanceportal",
+            storageBucket: "sanayagrievanceportal.firebasestorage.app",
+             messagingSenderId: "983089657479",
+            appId: "1:983089657479:web:5986b9ba702affa8e3aa22"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const grievancesRef = database.ref('grievances');
+
+        let grievances = [];
+
+        function checkAccess() {
+            const accessCode = document.getElementById('accessCode').value;
+            if (accessCode === 'mydearstrawberry') {
+                document.getElementById('accessPage').classList.add('hidden');
+                document.getElementById('grievanceView').classList.remove('hidden');
+                loadGrievances();
+            } else {
+                alert('Incorrect access code. Try again!');
+            }
+        }
+
+        function loadGrievances() {
+            grievancesRef.on('value', (snapshot) => {
+                grievances = [];
+                snapshot.forEach((childSnapshot) => {
+                    grievances.push(childSnapshot.val());
+                });
+                updateGrievanceTable();
+                showNotification();
+            });
+        }
+
+        function updateGrievanceTable() {
+            const grievanceBody = document.getElementById('grievanceBody');
+            grievanceBody.innerHTML = '';
+            grievances.forEach(grievance => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grievance.title}</td>
+                    <td>${grievance.desc}</td>
+                    <td>${grievance.mood}</td>
+                    <td>${grievance.date}</td>
+                `;
+                grievanceBody.appendChild(row);
+            });
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
