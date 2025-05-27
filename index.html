@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strawberry's Grievance Portal 🍓💕</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -260,7 +261,6 @@
             border-radius: 5px;
             border-left: 5px solid #4682B4;
         }
-        /* Updated Dashboard Styles */
         #dashboard {
             background: linear-gradient(135deg, #87CEEB, #E0FFFF);
             padding: 30px;
@@ -442,7 +442,7 @@
         <!-- Login Page -->
         <div id="loginPage" class="container">
             <h1>Strawberry's Grievance Portal 🍓💕</h1>
-            <p>My dear Strawberry, share your grievances, and I’ll shower you with love! 🥰</p>
+            <p>My dear Strawberry, my sweet Strawberry, share your grievances, and I’ll shower you with love! 🥰</p>
             <div id="photoFrame">
                 <img src="Sana.jpg" alt="Photo of Us">
             </div>
@@ -475,6 +475,7 @@
                 <p>Recent Grievances:</p>
                 <div id="recentGrievanceDetails"></div>
             </div>
+            <button onclick="window.location.href='boyfriend.html'">Go to Boyfriend's View</button>
             <div id="wishStar">⭐</div>
             <div id="shootingStar">🌠</div>
             <div id="wishMessage"></div>
@@ -534,7 +535,7 @@
                 <ul>
                     <li><strong>Our First Date</strong>: That magical evening at the park where we shared strawberry ice cream 🍓</li>
                     <li><strong>The Day I Called You Strawberry</strong>: You blushed so hard when I said you’re as sweet as one! 😊</li>
-                    <li><strong>Our First Trip</strong>: That weekend getaway where we watched the sunset together 🌅</li>
+                    <li><strong>Our First Trip</strong>: That Manali getaway where we watched the sunset together 🌅</li>
                     <li><strong>Your Birthday Surprise</strong>: I coded a little animation just for you, my love! 🎉</li>
                 </ul>
             </div>
@@ -555,8 +556,27 @@
     <div id="strawberryGarden" class="strawberry-garden hidden"></div>
     <img id="unicorn" src="https://media.giphy.com/media/3o7TKwmnDg2aWZiYxG/giphy.gif" alt="Dancing Unicorn">
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
+        // Firebase Configuration (Replace with your Firebase config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNNUNYrIrWSkYZy2u-uotWe-FvkrEwTM0",
+            authDomain: "sanayagrievanceportal.firebaseapp.com",
+            databaseURL: "https://sanayagrievanceportal-default-rtdb.firebaseio.com",
+            projectId: "sanayagrievanceportal",
+            storageBucket: "sanayagrievanceportal.firebasestorage.app",
+            messagingSenderId: "983089657479",
+            appId: "1:983089657479:web:5986b9ba702affa8e3aa22"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const grievancesRef = database.ref('grievances');
+
         const responses = {
             "😊 Happy": [
                 "I’m so glad you’re happy, Strawberry! Let’s code a new animation together to celebrate! 🍓🎉",
@@ -577,16 +597,16 @@
         };
 
         const loveNotes = [
-            "You’re my sweetuu Cutuuu Strawberry, and I adore you more than any code I’ve ever written! 🍓💻",
+            "You’re my sweet Strawberry, and I adore you more than any code I’ve ever written! 🍓💻",
             "Every moment with you is pure magic, Sanaya—like a perfectly animated canvas! 🌟",
             "I’m the luckiest guy to have you, my love—let’s build more memories together! 🍀",
             "You make my heart race every day, Strawberry, faster than any animation frame! 💓",
-            "I love you more than all the strawberries in the world, my Baby! 🍓✨"
+            "I love you more than all the strawberries in the world, my Sanaya! 🍓✨"
         ];
 
         const letterMessages = [
             "Dear Strawberry, you’re the sweetest part of my life. I’ll always be here to make you smile! 🍓💕",
-            "My Daer Baala, every day with you feels like a beautiful animation I never want to end. Love you! 🌟",
+            "My baby, every day with you feels like a beautiful animation I never want to end. Love you! 🌟",
             "To my Strawberry, I promise to code a lifetime of happiness for us. You’re my everything! 💻❤️"
         ];
 
@@ -605,7 +625,7 @@
             "Every star shines brighter because of you, Strawberry! ⭐"
         ];
 
-        let grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+        let grievances = [];
         let useNickname = true;
 
         function login() {
@@ -615,6 +635,7 @@
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
                 initDashboard();
+                loadGrievances();
             } else {
                 alert('Oops! Wrong username or password. Try again, Strawberry! 🍓💕');
             }
@@ -644,8 +665,19 @@
             });
         }
 
+        function loadGrievances() {
+            grievancesRef.on('value', (snapshot) => {
+                grievances = [];
+                snapshot.forEach((childSnapshot) => {
+                    grievances.push(childSnapshot.val());
+                });
+                updateRecentGrievances();
+                updateHistory();
+            });
+        }
+
         function updateClock() {
-            const now = new Date();
+            const now = new Date('2025-05-27T15:10:00+05:30'); // Current time: 03:10 PM IST, May 27, 2025
             const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' };
             const timeString = now.toLocaleTimeString('en-US', options);
             document.getElementById('liveClock').innerText = `Time to make more memories with you, Strawberry! ⏰ ${timeString}`;
@@ -705,15 +737,12 @@
 
             if (title && desc) {
                 const grievance = { title, desc, mood, date };
-                grievances.push(grievance);
-                localStorage.setItem('grievances', JSON.stringify(grievances));
+                grievancesRef.push(grievance); // Save to Firebase
                 triggerChaosMode();
                 triggerStrawberrySurprise();
                 showResponse(mood);
                 showNotification();
                 showLoveLetter();
-                updateHistory();
-                updateRecentGrievances(); // Update dashboard with latest grievance
             } else {
                 alert('Please fill out all fields, Strawberry! 🍓💕');
             }
@@ -852,6 +881,21 @@
             document.getElementById('dashboard').classList.add('hidden');
             document.getElementById('historyPage').classList.remove('hidden');
             document.getElementById('memoryLane').classList.remove('hidden');
+        }
+
+        function updateHistory() {
+            const historyBody = document.getElementById('historyBody');
+            historyBody.innerHTML = '';
+            grievances.forEach(grievance => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grievance.title}</td>
+                    <td>${grievance.desc}</td>
+                    <td>${grievance.mood}</td>
+                    <td>${grievance.date}</td>
+                `;
+                historyBody.appendChild(row);
+            });
         }
 
         function showMemoryLane() {
